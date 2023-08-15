@@ -98,6 +98,21 @@ async function run() {
       res.send(orders);
 
     })
+    // then the payment is done the user statues will be "Order Placed"
+    app.put('/orders', async (req, res) => {
+      const user = req.body;
+      console.log(user)
+      const options = { upsert: true }
+      const id = user.id;
+      const filter = { _id: new ObjectId(id) }
+      const updatedDoc = {
+        $set: {
+          status: user.status
+        }
+      }
+      const result = await ordersCollection.updateOne(filter, updatedDoc, options);
+      res.send(result)
+    })
 
 
     app.put('/manage-orders', async (req, res) => {
@@ -136,7 +151,7 @@ async function run() {
     app.post('/payments', async (req, res) => {
       const payment = req.body;
       const result = await paymentsCollection.insertOne(payment);
-      console.log(result)
+      // console.log(result)
       res.send(result)
     })
 
